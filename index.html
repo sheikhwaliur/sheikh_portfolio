@@ -8,404 +8,180 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --ink:#0a0a0f;
+  --ink:#0a0a12;
   --cream:#f5f0e8;
   --gold:#c9a84c;
-  --teal:#1a6b5a;
+  --jade:#1a6b5a;
   --accent:#e85d3a;
   --muted:#8a8070;
+  --dark:#111118;
   --card:#fffdf8;
+  --bamboo:#2d5a27;
 }
 html{scroll-behavior:smooth}
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--cream);
-  color:var(--ink);
-  overflow-x:hidden;
-}
-
-/* CURSOR */
-.cursor{position:fixed;width:12px;height:12px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s,width .3s,height .3s,opacity .3s;mix-blend-mode:multiply}
-.cursor.expand{width:50px;height:50px;opacity:.4}
-
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:1.5rem 4rem;
-  background:rgba(245,240,232,.9);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(201,168,76,.2);
-}
-.nav-logo{
-  font-family:'Playfair Display',serif;
-  font-weight:900;font-size:1.4rem;
-  color:var(--ink);letter-spacing:-.02em;
-}
+body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;}
+#loader{position:fixed;inset:0;z-index:9999;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease,visibility .8s ease;}
+#loader.hide{opacity:0;visibility:hidden}
+.loader-panda{font-size:5rem;animation:pandaBounce 1s ease-in-out infinite;margin-bottom:2rem}
+@keyframes pandaBounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-20px) rotate(5deg)}}
+.loader-text{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;color:var(--cream);letter-spacing:.05em;text-align:center;margin-bottom:1.5rem;}
+.loader-sub{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:2.5rem}
+.loader-bar{width:200px;height:2px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+.loader-fill{height:100%;background:var(--gold);border-radius:10px;width:0;animation:loadFill 2.5s ease forwards}
+@keyframes loadFill{0%{width:0}100%{width:100%}}
+.loader-dots{display:flex;gap:.5rem;margin-top:1.5rem}
+.loader-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);animation:dotPulse 1.2s ease infinite}
+.loader-dots span:nth-child(2){animation-delay:.2s}
+.loader-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,100%{background:rgba(255,255,255,.2)}50%{background:var(--gold)}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 3rem;background:rgba(10,10,18,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,.15);}
+.nav-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:1.3rem;color:var(--cream);letter-spacing:-.02em;display:flex;align-items:center;gap:.6rem;}
+.nav-logo .panda-mini{font-size:1.1rem}
 .nav-logo span{color:var(--gold)}
-.nav-links{display:flex;gap:2.5rem;list-style:none}
-.nav-links a{
-  font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;
-  text-decoration:none;color:var(--muted);transition:color .3s;
-}
-.nav-links a:hover{color:var(--accent)}
-
-/* HERO */
-#hero{
-  min-height:100vh;
-  display:flex;align-items:center;
-  padding:8rem 4rem 4rem;
-  position:relative;overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 60% 70% at 80% 50%, rgba(201,168,76,.12) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 50% at 10% 80%, rgba(26,107,90,.08) 0%, transparent 60%);
-}
-.hero-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(10,10,15,.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(10,10,15,.04) 1px, transparent 1px);
-  background-size:60px 60px;
-}
-.hero-content{position:relative;z-index:2;max-width:900px}
-.hero-tag{
-  display:inline-flex;align-items:center;gap:.6rem;
-  font-family:'DM Mono',monospace;font-size:.78rem;
-  color:var(--teal);border:1px solid var(--teal);
-  padding:.4rem 1rem;border-radius:100px;margin-bottom:2rem;
-  opacity:0;transform:translateY(20px);animation:fadeUp .8s .2s forwards;
-}
-.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
-.hero-name{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(3.5rem,8vw,7rem);
-  font-weight:900;line-height:.95;
-  letter-spacing:-.03em;
-  opacity:0;animation:fadeUp .8s .4s forwards;
-}
-.hero-name .line2{color:var(--gold);display:block}
-.hero-desc{
-  font-size:1.15rem;color:var(--muted);line-height:1.7;
-  max-width:520px;margin:2rem 0 2.5rem;
-  opacity:0;animation:fadeUp .8s .6s forwards;
-}
-.hero-cta{
-  display:flex;gap:1rem;flex-wrap:wrap;
-  opacity:0;animation:fadeUp .8s .8s forwards;
-}
-.btn-primary{
-  background:var(--ink);color:var(--cream);
-  padding:.9rem 2.2rem;border-radius:100px;
-  text-decoration:none;font-size:.9rem;font-weight:500;
-  letter-spacing:.02em;transition:all .3s;border:2px solid var(--ink);
-}
-.btn-primary:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
-.btn-outline{
-  background:transparent;color:var(--ink);
-  padding:.9rem 2.2rem;border-radius:100px;
-  text-decoration:none;font-size:.9rem;font-weight:500;
-  letter-spacing:.02em;transition:all .3s;border:2px solid var(--ink);
-}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
-.hero-number{
-  position:absolute;right:4rem;top:50%;transform:translateY(-50%);
-  font-family:'Playfair Display',serif;font-size:clamp(8rem,18vw,16rem);
-  font-weight:900;color:rgba(201,168,76,.08);line-height:1;
-  pointer-events:none;user-select:none;
-  opacity:0;animation:fadeUp .8s 1s forwards;
-}
-
-/* STATS BAR */
-.stats-bar{
-  background:var(--ink);color:var(--cream);
-  padding:2.5rem 4rem;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;
-}
-.stat{border-right:1px solid rgba(245,240,232,.1);padding-right:2rem}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:rgba(245,240,232,.5);transition:color .3s;}
+.nav-links a:hover{color:var(--gold)}
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:.4rem;}
+.burger span{display:block;width:22px;height:1.5px;background:var(--cream);border-radius:2px;transition:all .4s cubic-bezier(.77,0,.18,1);transform-origin:center;}
+.burger.open span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px)}
+.burger.open span:nth-child(2){transform:rotate(-45deg) translate(4.5px,-4.5px)}
+.mob-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;}
+.mob-overlay.open{pointer-events:all}
+.mob-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);opacity:0;transition:opacity .5s;backdrop-filter:blur(6px);}
+.mob-overlay.open .mob-backdrop{opacity:1}
+.mob-menu{position:absolute;top:0;right:0;width:80%;max-width:320px;height:100vh;background:var(--dark);border-left:1px solid rgba(201,168,76,.15);transform:translateX(100%);transition:transform .55s cubic-bezier(.77,0,.18,1);display:flex;flex-direction:column;padding:2rem;}
+.mob-overlay.open .mob-menu{transform:translateX(0)}
+.mob-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:2.5rem;}
+.mob-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:1.3rem;color:var(--cream);}
+.mob-logo span{color:var(--gold)}
+.mob-close{background:none;border:1px solid rgba(245,240,232,.15);color:var(--cream);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.85rem;transition:all .3s;}
+.mob-close:hover{background:var(--accent);border-color:var(--accent)}
+.mob-panda{font-size:3rem;text-align:center;margin-bottom:1.5rem;animation:pandaBounce 2s ease-in-out infinite;}
+.mob-nav{display:flex;flex-direction:column;flex:1}
+.mob-link{text-decoration:none;color:rgba(245,240,232,.3);font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;padding:.5rem 0;border-bottom:1px solid rgba(245,240,232,.05);display:flex;align-items:center;justify-content:space-between;transition:all .4s;transform:translateX(30px);opacity:0;}
+.mob-overlay.open .mob-link{transform:translateX(0);opacity:1}
+.mob-overlay.open .mob-link:nth-child(1){transition-delay:.12s}
+.mob-overlay.open .mob-link:nth-child(2){transition-delay:.17s}
+.mob-overlay.open .mob-link:nth-child(3){transition-delay:.22s}
+.mob-overlay.open .mob-link:nth-child(4){transition-delay:.27s}
+.mob-overlay.open .mob-link:nth-child(5){transition-delay:.32s}
+.mob-link::before{content:attr(data-n);font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold);font-weight:400;}
+.mob-link:hover{color:var(--cream);padding-left:.4rem}
+.mob-foot{margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(245,240,232,.07);}
+.mob-foot p{font-size:.7rem;color:rgba(245,240,232,.25);margin-bottom:.3rem;font-family:'DM Mono',monospace;}
+#hero{min-height:100vh;display:flex;align-items:center;padding:8rem 4rem 4rem;position:relative;overflow:hidden;background:var(--ink);}
+.stars{position:absolute;inset:0;overflow:hidden;}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--d,3s) ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.8}}
+.moon{position:absolute;right:8%;top:15%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fffde7,#f5d060);box-shadow:0 0 40px rgba(245,208,96,.3),0 0 80px rgba(245,208,96,.1);animation:moonFloat 6s ease-in-out infinite;}
+@keyframes moonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.bamboo-forest{position:absolute;bottom:0;left:0;right:0;height:40%;display:flex;align-items:flex-end;gap:2px;pointer-events:none;}
+.bamboo-stalk{background:linear-gradient(to top,#1a3d16,#2d5a27,#3a7a30);border-radius:3px 3px 0 0;animation:bambooBlow var(--bw,4s) ease-in-out infinite;transform-origin:bottom center;}
+@keyframes bambooBlow{0%,100%{transform:rotate(0deg)}50%{transform:rotate(var(--br,2deg))}}
+.hero-panda{font-size:clamp(5rem,12vw,9rem);animation:pandaFloat 4s ease-in-out infinite;display:block;margin-bottom:1rem;position:relative;z-index:2;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));}
+@keyframes pandaFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-15px) rotate(3deg)}}
+.hero-content{position:relative;z-index:2;max-width:800px;}
+.hero-tag{display:inline-flex;align-items:center;gap:.6rem;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--gold);border:1px solid rgba(201,168,76,.4);padding:.35rem .9rem;border-radius:100px;margin-bottom:1.5rem;opacity:0;animation:fadeUp .8s .3s forwards;}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+.hero-name{font-family:'Playfair Display',serif;font-size:clamp(3rem,7vw,6.5rem);font-weight:900;line-height:.95;letter-spacing:-.03em;opacity:0;animation:fadeUp .8s .5s forwards;}
+.hero-name .gold{color:var(--gold)}
+.hero-name .line2{display:block}
+.hero-desc{font-size:1.05rem;color:rgba(245,240,232,.6);line-height:1.75;max-width:480px;margin:1.8rem 0 2.2rem;opacity:0;animation:fadeUp .8s .7s forwards;}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards;}
+.btn-gold{background:var(--gold);color:var(--ink);padding:.85rem 2rem;border-radius:100px;text-decoration:none;font-size:.88rem;font-weight:600;letter-spacing:.02em;transition:all .3s;border:2px solid var(--gold);}
+.btn-gold:hover{background:transparent;color:var(--gold);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--cream);padding:.85rem 2rem;border-radius:100px;text-decoration:none;font-size:.88rem;font-weight:500;letter-spacing:.02em;transition:all .3s;border:2px solid rgba(245,240,232,.2);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+.scroll-hint{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fadeUp .8s 1.4s forwards;}
+.scroll-hint span{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:rgba(245,240,232,.3);text-transform:uppercase;}
+.scroll-arrow{width:1px;height:40px;background:linear-gradient(to bottom,rgba(201,168,76,.6),transparent);animation:scrollDrop 1.5s ease-in-out infinite;}
+@keyframes scrollDrop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.stats-bar{background:var(--gold);color:var(--ink);padding:2rem 4rem;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;}
+.stat-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;line-height:1;}
+.stat-label{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:.3rem;opacity:.65}
+.stat{border-right:1px solid rgba(10,10,18,.15);padding-right:2rem}
 .stat:last-child{border:none}
-.stat-num{
-  font-family:'Playfair Display',serif;
-  font-size:2.5rem;font-weight:700;color:var(--gold);
-  line-height:1;
-}
-.stat-label{font-size:.8rem;color:rgba(245,240,232,.5);letter-spacing:.06em;text-transform:uppercase;margin-top:.4rem}
-
-/* SECTIONS */
 section{padding:6rem 4rem}
-.section-eyebrow{
-  font-family:'DM Mono',monospace;font-size:.75rem;
-  color:var(--gold);letter-spacing:.12em;text-transform:uppercase;
-  margin-bottom:1rem;display:flex;align-items:center;gap:.8rem;
-}
-.section-eyebrow::after{content:'';flex:1;max-width:60px;height:1px;background:var(--gold)}
-.section-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2rem,4vw,3.5rem);font-weight:900;
-  line-height:1.05;letter-spacing:-.02em;margin-bottom:3rem;
-}
-
-/* ABOUT */
-#about{background:var(--card)}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
-.about-text p{font-size:1.05rem;line-height:1.8;color:#3a3530;margin-bottom:1.2rem}
-.about-langs{
-  display:flex;flex-wrap:wrap;gap:.6rem;margin-top:2rem;
-}
-.lang-tag{
-  padding:.4rem 1rem;border-radius:100px;
-  font-size:.8rem;font-weight:500;letter-spacing:.04em;
-  background:rgba(201,168,76,.12);color:var(--teal);
-  border:1px solid rgba(26,107,90,.2);
-}
-.about-card{
-  background:var(--ink);color:var(--cream);
-  border-radius:24px;padding:2.5rem;position:relative;overflow:hidden;
-}
-.about-card::before{
-  content:'';position:absolute;top:-40px;right:-40px;
-  width:150px;height:150px;border-radius:50%;
-  background:rgba(201,168,76,.15);
-}
-.about-card-title{
-  font-family:'Playfair Display',serif;
-  font-size:1.8rem;font-weight:700;color:var(--gold);margin-bottom:1.5rem;
-}
-.skill-list{list-style:none}
-.skill-list li{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:.8rem 0;border-bottom:1px solid rgba(245,240,232,.08);
-  font-size:.9rem;
-}
-.skill-list li:last-child{border:none}
-.skill-bar{
-  width:80px;height:3px;background:rgba(245,240,232,.15);border-radius:10px;overflow:hidden;
-}
-.skill-fill{height:100%;background:var(--gold);border-radius:10px;width:0;transition:width 1s ease}
-
-/* EXPERIENCE */
-#experience{background:var(--cream)}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.7rem;}
+.eyebrow::after{content:'';width:40px;height:1px;background:var(--gold)}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;margin-bottom:2.5rem;color:var(--cream);}
+#about{background:#0e0e16}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.about-text p{font-size:1rem;line-height:1.8;color:rgba(245,240,232,.65);margin-bottom:1rem}
+.panda-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.15);border-radius:24px;padding:2.5rem;text-align:center;position:relative;overflow:hidden;}
+.panda-card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.08),transparent 70%);}
+.panda-emoji{font-size:5rem;display:block;margin-bottom:1rem;animation:pandaFloat 3s ease-in-out infinite;}
+.panda-name{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:.4rem;}
+.panda-role{font-size:.85rem;color:rgba(245,240,232,.4);margin-bottom:2rem;}
+.skill-rows{text-align:left}
+.skill-row{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem;color:rgba(245,240,232,.7);}
+.skill-row:last-child{border:none}
+.skill-dots{display:flex;gap:3px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.12)}
+.dot.filled{background:var(--gold)}
+.lang-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem}
+.lang-tag{padding:.3rem .85rem;border-radius:100px;font-size:.75rem;font-weight:500;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);}
+#experience{background:var(--ink)}
 .timeline{position:relative;padding-left:2rem}
-.timeline::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;
-  width:1px;background:linear-gradient(to bottom, var(--gold), transparent);
-}
-.timeline-item{
-  position:relative;margin-bottom:3.5rem;
-  opacity:0;transform:translateX(-20px);transition:all .6s ease;
-}
-.timeline-item.visible{opacity:1;transform:translateX(0)}
-.timeline-dot{
-  position:absolute;left:-2.45rem;top:.4rem;
-  width:10px;height:10px;border-radius:50%;
-  background:var(--gold);border:2px solid var(--cream);box-shadow:0 0 0 3px var(--gold);
-}
-.timeline-date{
-  font-family:'DM Mono',monospace;font-size:.75rem;
-  color:var(--gold);letter-spacing:.06em;margin-bottom:.5rem;
-}
-.timeline-role{
-  font-family:'Playfair Display',serif;
-  font-size:1.5rem;font-weight:700;margin-bottom:.3rem;
-}
-.timeline-company{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
-.timeline-desc{font-size:.9rem;color:#3a3530;line-height:1.7}
-.timeline-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
-.tl-tag{
-  font-size:.75rem;padding:.3rem .8rem;border-radius:100px;
-  background:rgba(201,168,76,.1);color:var(--teal);
-  border:1px solid rgba(201,168,76,.2);
-}
-
-/* SKILLS GRID */
-#skills{background:var(--ink);color:var(--cream)}
-#skills .section-title{color:var(--cream)}
-.skills-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:1.5rem;
-}
-.skill-card{
-  background:rgba(245,240,232,.04);border:1px solid rgba(245,240,232,.08);
-  border-radius:16px;padding:1.8rem;
-  transition:all .3s;cursor:default;
-}
-.skill-card:hover{
-  background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.3);
-  transform:translateY(-4px);
-}
-.skill-icon{font-size:2rem;margin-bottom:1rem}
-.skill-card-title{font-weight:500;margin-bottom:.5rem;color:var(--cream)}
-.skill-card-desc{font-size:.8rem;color:rgba(245,240,232,.45);line-height:1.5}
-
-/* EDUCATION */
-#education{background:var(--card)}
-.edu-card{
-  background:var(--cream);border:1px solid rgba(201,168,76,.2);
-  border-radius:20px;padding:2.5rem;
-  display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:start;
-}
-.edu-badge{
-  width:70px;height:70px;border-radius:16px;
-  background:var(--ink);display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--gold);
-}
-.edu-degree{
-  font-family:'Playfair Display',serif;
-  font-size:1.4rem;font-weight:700;margin-bottom:.3rem;
-}
-.edu-school{color:var(--muted);font-size:.9rem;margin-bottom:.8rem}
-.edu-highlights{list-style:none;display:flex;gap:1rem;flex-wrap:wrap}
-.edu-highlights li{
-  font-size:.8rem;padding:.3rem .9rem;border-radius:100px;
-  background:rgba(201,168,76,.12);color:var(--teal);
-  border:1px solid rgba(201,168,76,.2);font-weight:500;
-}
-
-/* CONTACT */
-#contact{
-  background:var(--ink);color:var(--cream);
-  text-align:center;
-}
-#contact .section-title{color:var(--cream)}
-#contact .section-eyebrow{justify-content:center}
-#contact .section-eyebrow::after{display:none}
-.contact-desc{
-  font-size:1.1rem;color:rgba(245,240,232,.6);
-  max-width:480px;margin:0 auto 3rem;line-height:1.7;
-}
-.contact-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}
-.contact-link{
-  display:flex;align-items:center;gap:.6rem;
-  padding:1rem 2rem;border-radius:100px;
-  border:1px solid rgba(245,240,232,.15);
-  color:var(--cream);text-decoration:none;font-size:.9rem;
-  transition:all .3s;
-}
-.contact-link:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);transform:translateY(-2px)}
-.footer-note{
-  margin-top:5rem;padding-top:2rem;border-top:1px solid rgba(245,240,232,.08);
-  font-size:.8rem;color:rgba(245,240,232,.25);
-  font-family:'DM Mono',monospace;
-}
-
-/* ANIMATIONS */
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--gold),transparent);}
+.tl-item{position:relative;margin-bottom:3rem;opacity:0;transform:translateX(-20px);transition:all .6s ease;}
+.tl-item.visible{opacity:1;transform:translateX(0)}
+.tl-dot{position:absolute;left:-2.4rem;top:.4rem;width:10px;height:10px;border-radius:50%;background:var(--gold);border:2px solid var(--ink);box-shadow:0 0 0 3px rgba(201,168,76,.4);}
+.tl-date{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);letter-spacing:.06em;margin-bottom:.4rem;}
+.tl-role{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--cream);margin-bottom:.25rem;}
+.tl-company{font-size:.85rem;color:rgba(245,240,232,.4);margin-bottom:.8rem;}
+.tl-desc{font-size:.88rem;color:rgba(245,240,232,.6);line-height:1.7;}
+.tl-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.9rem;}
+.tl-tag{font-size:.72rem;padding:.25rem .7rem;border-radius:100px;background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.15);}
+#skills{background:#0e0e16}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;}
+.skill-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.6rem;transition:all .35s;cursor:default;}
+.skill-card:hover{background:rgba(201,168,76,.06);border-color:rgba(201,168,76,.25);transform:translateY(-5px);}
+.sk-icon{font-size:1.8rem;margin-bottom:.8rem}
+.sk-title{font-weight:500;font-size:.95rem;margin-bottom:.4rem;color:var(--cream);}
+.sk-desc{font-size:.78rem;color:rgba(245,240,232,.4);line-height:1.5}
+#education{background:var(--ink)}
+.edu-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.15);border-radius:20px;padding:2.5rem;display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:start;}
+.edu-badge{width:64px;height:64px;border-radius:14px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--ink);}
+.edu-degree{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--cream);margin-bottom:.3rem;}
+.edu-school{color:rgba(245,240,232,.4);font-size:.85rem;margin-bottom:.8rem;}
+.edu-pills{display:flex;gap:.8rem;flex-wrap:wrap}
+.edu-pill{font-size:.75rem;padding:.3rem .9rem;border-radius:100px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);font-weight:500;}
+#contact{background:#0e0e16;text-align:center;}
+.contact-panda{font-size:4rem;display:block;margin-bottom:1rem;animation:pandaFloat 3s ease-in-out infinite;}
+.contact-desc{font-size:1rem;color:rgba(245,240,232,.5);max-width:420px;margin:0 auto 2.5rem;line-height:1.7;}
+.contact-links{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;}
+.c-link{display:flex;align-items:center;gap:.5rem;padding:.9rem 1.8rem;border-radius:100px;border:1px solid rgba(245,240,232,.12);color:rgba(245,240,232,.7);text-decoration:none;font-size:.85rem;transition:all .3s;}
+.c-link:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);transform:translateY(-2px);}
+.footer-note{margin-top:4rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.05);font-size:.75rem;color:rgba(245,240,232,.2);font-family:'DM Mono',monospace;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.reveal{opacity:0;transform:translateY(35px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
-
-/* MOBILE */
 @media(max-width:768px){
-  nav{padding:1.2rem 1.5rem}
+  nav{padding:1rem 1.5rem}
   .nav-links{display:none}
-  #hero{padding:7rem 1.5rem 4rem}
-  .hero-number{display:none}
-  .stats-bar{grid-template-columns:1fr 1fr;padding:2rem 1.5rem}
+  .burger{display:flex}
+  #hero{padding:6rem 1.5rem 4rem}
+  .stats-bar{grid-template-columns:1fr 1fr;padding:1.5rem}
   .stat{border:none;padding:0}
   section{padding:4rem 1.5rem}
   .about-grid{grid-template-columns:1fr}
   .edu-card{grid-template-columns:1fr}
-}
-.burger{
-  display:none;flex-direction:column;justify-content:center;
-  gap:6px;background:none;border:none;cursor:pointer;
-  padding:.4rem;z-index:200;
-}
-.burger span{
-  display:block;width:24px;height:1.5px;
-  background:var(--ink);border-radius:2px;
-  transition:all .4s cubic-bezier(.77,0,.18,1);
-  transform-origin:center;
-}
-.burger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
-.burger.open span:nth-child(2){transform:rotate(-45deg) translate(5px,-5px)}
-.mob-overlay{
-  position:fixed;inset:0;z-index:500;
-  pointer-events:none;
-}
-.mob-overlay.open{pointer-events:all}
-.mob-menu{
-  position:absolute;top:0;right:0;
-  width:85%;max-width:360px;height:100vh;
-  background:var(--ink);
-  transform:translateX(100%);
-  transition:transform .6s cubic-bezier(.77,0,.18,1);
-  display:flex;flex-direction:column;
-  padding:2rem 2.5rem;
-}
-.mob-overlay.open .mob-menu{transform:translateX(0)}
-.mob-backdrop{
-  position:absolute;inset:0;
-  background:rgba(10,10,15,.6);
-  opacity:0;transition:opacity .6s;
-  backdrop-filter:blur(4px);
-}
-.mob-overlay.open .mob-backdrop{opacity:1}
-.mob-top{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:3rem;
-}
-.mob-logo{
-  font-family:'Playfair Display',serif;
-  font-weight:900;font-size:1.4rem;color:var(--cream);
-}
-.mob-logo span{color:var(--gold)}
-.mob-close{
-  background:none;border:1px solid rgba(245,240,232,.2);
-  color:var(--cream);width:36px;height:36px;border-radius:50%;
-  cursor:pointer;font-size:.9rem;
-  transition:all .3s;
-}
-.mob-close:hover{background:var(--accent);border-color:var(--accent)}
-.mob-nav{display:flex;flex-direction:column;gap:0;flex:1}
-.mob-link{
-  text-decoration:none;
-  color:rgba(245,240,232,.3);
-  font-family:'Playfair Display',serif;
-  font-size:2.2rem;font-weight:700;
-  padding:.6rem 0;
-  border-bottom:1px solid rgba(245,240,232,.06);
-  display:flex;align-items:center;justify-content:space-between;
-  transition:all .4s;
-  transform:translateX(40px);opacity:0;
-}
-.mob-overlay.open .mob-link{transform:translateX(0);opacity:1}
-.mob-overlay.open .mob-link:nth-child(1){transition-delay:.15s}
-.mob-overlay.open .mob-link:nth-child(2){transition-delay:.2s}
-.mob-overlay.open .mob-link:nth-child(3){transition-delay:.25s}
-.mob-overlay.open .mob-link:nth-child(4){transition-delay:.3s}
-.mob-overlay.open .mob-link:nth-child(5){transition-delay:.35s}
-.mob-link::before{
-  content:attr(data-n);
-  font-family:'DM Mono',monospace;
-  font-size:.7rem;color:var(--gold);
-  font-weight:400;
-}
-.mob-link:hover{color:var(--cream);padding-left:.5rem}
-.mob-footer{
-  margin-top:2rem;padding-top:1.5rem;
-  border-top:1px solid rgba(245,240,232,.08);
-}
-.mob-footer p{
-  font-size:.75rem;color:rgba(245,240,232,.3);
-  margin-bottom:.4rem;font-family:'DM Mono',monospace;
-}
-@media(max-width:768px){
-  .burger{display:flex}
-  .nav-links{display:none}
+  .moon{width:70px;height:70px}
 }
 </style>
 </head>
 <body>
-
-<div class="cursor" id="cursor"></div>
-
-<!-- NAV -->
+<div id="loader">
+  <div class="loader-panda">🐼</div>
+  <div class="loader-text">Entering the World of SWR</div>
+  <div class="loader-sub">Sheikh Waliur Rahman</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-dots"><span></span><span></span><span></span></div>
+</div>
 <nav>
-  <div class="nav-logo">SW<span>R</span></div>
+  <div class="nav-logo"><span class="panda-mini">🐼</span> SW<span>R</span></div>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#experience">Experience</a></li>
@@ -413,18 +189,15 @@ section{padding:6rem 4rem}
     <li><a href="#education">Education</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <button class="burger" id="burger" aria-label="Menu">
-    <span></span><span></span>
-  </button>
+  <button class="burger" id="burger"><span></span><span></span></button>
 </nav>
-
-<!-- MOBILE MENU OVERLAY -->
 <div class="mob-overlay" id="mobOverlay">
   <div class="mob-menu">
-    <div class="mob-top">
+    <div class="mob-head">
       <div class="mob-logo">SW<span>R</span></div>
       <button class="mob-close" id="mobClose">✕</button>
     </div>
+    <div class="mob-panda">🐼</div>
     <nav class="mob-nav">
       <a href="#about" class="mob-link" data-n="01">About</a>
       <a href="#experience" class="mob-link" data-n="02">Experience</a>
@@ -432,279 +205,153 @@ section{padding:6rem 4rem}
       <a href="#education" class="mob-link" data-n="04">Education</a>
       <a href="#contact" class="mob-link" data-n="05">Contact</a>
     </nav>
-    <div class="mob-footer">
-      <p>sheikhwaliur004@gmail.com</p>
+    <div class="mob-foot">
+      <p>sheikhwaliur001@gmail.com</p>
       <p>(929) 217-3359</p>
     </div>
   </div>
 </div>
-
-<!-- HERO -->
 <section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
+  <div class="stars" id="stars"></div>
+  <div class="moon"></div>
+  <div class="bamboo-forest" id="bamboo"></div>
   <div class="hero-content">
-    <div class="hero-tag">&#9679; Available for opportunities</div>
-    <h1 class="hero-name">
-      Sheikh Waliur<span class="line2">Rahman</span>
-    </h1>
-    <p class="hero-desc">Pharmacy Technician & Computer Science graduate blending precision healthcare expertise with technical fluency across 4 languages.</p>
+    <span class="hero-panda">🐼</span>
+    <div class="hero-tag">&#9679; Available for opportunities · NYC</div>
+    <h1 class="hero-name">Sheikh Waliur<span class="line2 gold">Rahman</span></h1>
+    <p class="hero-desc">Pharmacy Technician & CS graduate — bridging healthcare precision with tech, across 4 languages, from the heart of New York.</p>
     <div class="hero-cta">
-      <a href="#contact" class="btn-primary">Get in touch</a>
-      <a href="#experience" class="btn-outline">View my work</a>
+      <a href="#contact" class="btn-gold">Get in touch</a>
+      <a href="#experience" class="btn-ghost">Explore my world</a>
     </div>
   </div>
-  <div class="hero-number">01</div>
+  <div class="scroll-hint"><span>Scroll</span><div class="scroll-arrow"></div></div>
 </section>
-
-<!-- STATS -->
 <div class="stats-bar">
-  <div class="stat">
-    <div class="stat-num" data-count="300">0</div>
-    <div class="stat-label">Rx fulfilled daily</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num" data-count="4">0</div>
-    <div class="stat-label">Languages spoken</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num" data-count="3.7" data-decimal="true">0</div>
-    <div class="stat-label">University GPA</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num" data-count="15">0</div>
-    <div class="stat-label">Students tutored</div>
-  </div>
+  <div class="stat"><div class="stat-num" data-count="300">0</div><div class="stat-label">Rx fulfilled daily</div></div>
+  <div class="stat"><div class="stat-num" data-count="4">0</div><div class="stat-label">Languages spoken</div></div>
+  <div class="stat"><div class="stat-num" data-count="3.7" data-decimal="true">0</div><div class="stat-label">University GPA</div></div>
+  <div class="stat"><div class="stat-num" data-count="15">0</div><div class="stat-label">Students tutored</div></div>
 </div>
-
-<!-- ABOUT -->
 <section id="about">
   <div class="about-grid">
     <div class="about-text reveal">
-      <div class="section-eyebrow">Who I am</div>
-      <h2 class="section-title">Detail-driven, human-centered.</h2>
-      <p>I'm a dedicated Pharmacy Technician at CVS Pharmacy with a Computer Science degree from BRAC University. I bridge the worlds of healthcare precision and technical problem-solving.</p>
-      <p>From processing 300+ prescriptions daily with zero errors to leading robotics club events and tutoring 15+ students — I bring the same meticulous attention to everything I do.</p>
-      <p>Currently pursuing New York State Pharmacy Technician registration, and always open to roles at the intersection of healthcare and technology.</p>
-      <div class="about-langs">
-        <span class="lang-tag">🇺🇸 English — Native</span>
-        <span class="lang-tag">🇧🇩 Bengali — Native</span>
-        <span class="lang-tag">🇮🇳 Hindi — Full Professional</span>
-        <span class="lang-tag">🇵🇰 Urdu — Full Professional</span>
+      <div class="eyebrow">Who I am</div>
+      <h2 class="sec-title">Detail-driven,<br>human-centered.</h2>
+      <p>I'm Sheikh — a Pharmacy Technician at CVS and a CS grad from BRAC University. I bridge healthcare precision with technical problem-solving every single day.</p>
+      <p>300+ prescriptions. Zero errors. Whether it's resolving billing discrepancies or debugging code, I bring the same meticulous attention to everything I touch.</p>
+      <p>Currently pursuing NY State Pharmacy Technician registration — and always open to where healthcare meets technology.</p>
+      <div class="lang-tags">
+        <span class="lang-tag">🇺🇸 English</span>
+        <span class="lang-tag">🇧🇩 Bengali</span>
+        <span class="lang-tag">🇮🇳 Hindi</span>
+        <span class="lang-tag">🇵🇰 Urdu</span>
       </div>
     </div>
-    <div class="about-card reveal">
-      <div class="about-card-title">Technical Skills</div>
-      <ul class="skill-list">
-        <li><span>Python</span><div class="skill-bar"><div class="skill-fill" data-w="85"></div></div></li>
-        <li><span>Java</span><div class="skill-bar"><div class="skill-fill" data-w="80"></div></div></li>
-        <li><span>C++</span><div class="skill-bar"><div class="skill-fill" data-w="75"></div></div></li>
-        <li><span>Git & Linux</span><div class="skill-bar"><div class="skill-fill" data-w="78"></div></div></li>
-        <li><span>POS / PMS Systems</span><div class="skill-bar"><div class="skill-fill" data-w="95"></div></div></li>
-        <li><span>EHR / Healthcare IT</span><div class="skill-bar"><div class="skill-fill" data-w="70"></div></div></li>
-      </ul>
+    <div class="panda-card reveal">
+      <span class="panda-emoji">🐼</span>
+      <div class="panda-name">Sheikh's Skills</div>
+      <div class="panda-role">Tech & Clinical</div>
+      <div class="skill-rows">
+        <div class="skill-row"><span>Python</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-row"><span>Java</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-row"><span>C++</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+        <div class="skill-row"><span>POS/PMS Systems</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-row"><span>HIPAA & Compliance</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-row"><span>Git & Linux</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+      </div>
     </div>
   </div>
 </section>
-
-<!-- EXPERIENCE -->
 <section id="experience">
-  <div class="section-eyebrow reveal">What I've done</div>
-  <h2 class="section-title reveal">Experience</h2>
+  <div class="eyebrow reveal">What I've done</div>
+  <h2 class="sec-title reveal">Experience</h2>
   <div class="timeline">
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">NOV 2025 — PRESENT</div>
-      <div class="timeline-role">Pharmacy Technician</div>
-      <div class="timeline-company">CVS Pharmacy · Ozone Park, NY</div>
-      <div class="timeline-desc">Accurately process and fulfill 300+ prescriptions daily, maintaining strict adherence to dosage safety protocols. Identify and resolve complex insurance and third-party billing discrepancies, ensuring uninterrupted patient access to medications. Full HIPAA compliance at all times.</div>
-      <div class="timeline-tags">
-        <span class="tl-tag">Prescription Fulfillment</span>
-        <span class="tl-tag">Insurance Billing</span>
-        <span class="tl-tag">HIPAA Compliance</span>
-        <span class="tl-tag">Inventory Management</span>
-        <span class="tl-tag">POS/PMS Systems</span>
-      </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">NOV 2025 — PRESENT</div>
+      <div class="tl-role">Pharmacy Technician</div>
+      <div class="tl-company">CVS Pharmacy · Ozone Park, NY</div>
+      <div class="tl-desc">Process and fulfill 300+ prescriptions daily with full HIPAA compliance. Resolve complex insurance and third-party billing discrepancies. Manage inventory via POS/PMS systems to reduce medication waste.</div>
+      <div class="tl-tags"><span class="tl-tag">Prescription Fulfillment</span><span class="tl-tag">Insurance Billing</span><span class="tl-tag">HIPAA</span><span class="tl-tag">Inventory</span><span class="tl-tag">POS/PMS</span></div>
     </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2023 — 2025</div>
-      <div class="timeline-role">Event Lead & Member</div>
-      <div class="timeline-company">BRAC University Robotics Club · Dhaka, Bangladesh</div>
-      <div class="timeline-desc">Managed event logistics and hospitality for 10+ campus events. Trained and supervised 8 volunteers, upholding high service standards through structured communication and attention to detail.</div>
-      <div class="timeline-tags">
-        <span class="tl-tag">Event Management</span>
-        <span class="tl-tag">Team Leadership</span>
-        <span class="tl-tag">Volunteer Training</span>
-      </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">2023 — 2025</div>
+      <div class="tl-role">Event Lead & Member</div>
+      <div class="tl-company">BRAC University Robotics Club · Dhaka, Bangladesh</div>
+      <div class="tl-desc">Managed logistics for 10+ campus events. Trained and supervised 8 volunteers with structured communication and real-time problem solving.</div>
+      <div class="tl-tags"><span class="tl-tag">Event Management</span><span class="tl-tag">Team Leadership</span><span class="tl-tag">Volunteer Training</span></div>
     </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2021 — 2024</div>
-      <div class="timeline-role">Private Home Tutor</div>
-      <div class="timeline-company">Self-Employed · Dhaka, Bangladesh</div>
-      <div class="timeline-desc">Provided individualized academic support to 15+ students, resulting in an average 15% improvement in grades through tailored, data-informed lesson planning. Leveraged digital tools to enhance learning efficiency.</div>
-      <div class="timeline-tags">
-        <span class="tl-tag">Academic Tutoring</span>
-        <span class="tl-tag">Data-Informed Planning</span>
-        <span class="tl-tag">Communication</span>
-      </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">2021 — 2024</div>
+      <div class="tl-role">Private Home Tutor</div>
+      <div class="tl-company">Self-Employed · Dhaka, Bangladesh</div>
+      <div class="tl-desc">Supported 15+ students with personalized lesson planning, achieving an average 15% grade improvement through data-informed teaching methods.</div>
+      <div class="tl-tags"><span class="tl-tag">Academic Tutoring</span><span class="tl-tag">Planning</span><span class="tl-tag">Communication</span></div>
     </div>
-
   </div>
 </section>
-
-<!-- SKILLS -->
 <section id="skills">
-  <div class="section-eyebrow reveal">What I bring</div>
-  <h2 class="section-title reveal">Core Competencies</h2>
+  <div class="eyebrow reveal">What I bring</div>
+  <h2 class="sec-title reveal">Core Competencies</h2>
   <div class="skills-grid">
-    <div class="skill-card reveal">
-      <div class="skill-icon">⚕️</div>
-      <div class="skill-card-title">Clinical Expertise</div>
-      <div class="skill-card-desc">Prescription verification, controlled substance handling, medication storage protocols & patient counseling support.</div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">📋</div>
-      <div class="skill-card-title">Insurance & Billing</div>
-      <div class="skill-card-desc">Third-party billing resolution, reimbursement coordination, and EHR familiarity across high-volume clinical settings.</div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">💻</div>
-      <div class="skill-card-title">Software Development</div>
-      <div class="skill-card-desc">Python, Java, C++, Git, and Linux. Computer Science graduate with hands-on project experience.</div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">🌐</div>
-      <div class="skill-card-title">Multilingual</div>
-      <div class="skill-card-desc">Native English & Bengali. Full professional proficiency in Hindi and Urdu for diverse patient communication.</div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">📦</div>
-      <div class="skill-card-title">Inventory Systems</div>
-      <div class="skill-card-desc">Cycle counts, returns-to-stock, stock management via POS/PMS systems, reducing medication waste.</div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">🤝</div>
-      <div class="skill-card-title">Team Leadership</div>
-      <div class="skill-card-desc">Volunteer supervision, event coordination, conflict resolution and high-accuracy performance under pressure.</div>
-    </div>
+    <div class="skill-card reveal"><div class="sk-icon">⚕️</div><div class="sk-title">Clinical Expertise</div><div class="sk-desc">Prescription verification, controlled substance handling, medication storage & patient support.</div></div>
+    <div class="skill-card reveal"><div class="sk-icon">📋</div><div class="sk-title">Insurance & Billing</div><div class="sk-desc">Third-party billing, reimbursement coordination, EHR familiarity in high-volume settings.</div></div>
+    <div class="skill-card reveal"><div class="sk-icon">💻</div><div class="sk-title">Software Dev</div><div class="sk-desc">Python, Java, C++, Git, Linux. CS graduate with hands-on project experience.</div></div>
+    <div class="skill-card reveal"><div class="sk-icon">🌐</div><div class="sk-title">Multilingual</div><div class="sk-desc">Native English & Bengali. Full professional Hindi and Urdu for diverse patient care.</div></div>
+    <div class="skill-card reveal"><div class="sk-icon">📦</div><div class="sk-title">Inventory Systems</div><div class="sk-desc">Cycle counts, returns-to-stock, POS/PMS systems to minimize medication waste.</div></div>
+    <div class="skill-card reveal"><div class="sk-icon">🤝</div><div class="sk-title">Team Leadership</div><div class="sk-desc">Volunteer supervision, event coordination, conflict resolution under high-volume pressure.</div></div>
   </div>
 </section>
-
-<!-- EDUCATION -->
 <section id="education">
-  <div class="section-eyebrow reveal">Where I studied</div>
-  <h2 class="section-title reveal">Education</h2>
+  <div class="eyebrow reveal">Where I studied</div>
+  <h2 class="sec-title reveal">Education</h2>
   <div class="edu-card reveal">
     <div class="edu-badge">BU</div>
     <div>
       <div class="edu-degree">Bachelor of Science — Computer Science</div>
       <div class="edu-school">BRAC University · Dhaka, Bangladesh · Sep 2022 – Oct 2025</div>
-      <ul class="edu-highlights">
-        <li>GPA: 3.7 / 4.0</li>
-        <li>Dean's List — Spring 2023</li>
-        <li>Dean's List — Fall 2023</li>
-      </ul>
+      <div class="edu-pills">
+        <span class="edu-pill">GPA: 3.7 / 4.0</span>
+        <span class="edu-pill">Dean's List — Spring 2023</span>
+        <span class="edu-pill">Dean's List — Fall 2023</span>
+      </div>
     </div>
   </div>
 </section>
-
-<!-- CONTACT -->
 <section id="contact">
-  <div class="section-eyebrow">Let's connect</div>
-  <h2 class="section-title">Ready to work together?</h2>
-  <p class="contact-desc">Whether it's healthcare, tech, or anything in between — I'd love to hear from you. Available for all shifts including evenings and weekends.</p>
+  <span class="contact-panda">🐼</span>
+  <div class="eyebrow" style="justify-content:center">Let's connect</div>
+  <h2 class="sec-title">Ready to work together?</h2>
+  <p class="contact-desc">Whether it's healthcare, tech, or anything in between — the panda's door is always open. Available evenings and weekends too.</p>
   <div class="contact-links">
-    <a href="mailto:sheikhwaliur004@gmail.com" class="contact-link">✉ sheikhwaliur004@gmail.com</a>
-    <a href="tel:9292173359" class="contact-link">📞 (929) 217-3359</a>
-    <a href="#" class="contact-link">📍 Woodhaven, NY</a>
+    <a href="mailto:sheikhwaliur001@gmail.com" class="c-link">✉ sheikhwaliur001@gmail.com</a>
+    <a href="tel:9292173359" class="c-link">📞 (929) 217-3359</a>
+    <a href="#" class="c-link">📍 Woodhaven, NY</a>
   </div>
-  <p class="footer-note">© 2025 Sheikh Waliur Rahman · Built with care</p>
+  <p class="footer-note">© 2025 Sheikh Waliur Rahman · The World of SWR 🐼</p>
 </section>
-
 <script>
-// CURSOR
-const cur = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
-});
-document.querySelectorAll('a,button,.skill-card').forEach(el => {
-  el.addEventListener('mouseenter', () => cur.classList.add('expand'));
-  el.addEventListener('mouseleave', () => cur.classList.remove('expand'));
-});
-
-// INTERSECTION OBSERVER
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if(e.isIntersecting) {
-      e.target.classList.add('visible');
-      // Animate skill bars
-      e.target.querySelectorAll('.skill-fill').forEach(bar => {
-        bar.style.width = bar.dataset.w + '%';
-      });
-    }
-  });
-}, {threshold: 0.15});
-
-document.querySelectorAll('.reveal, .timeline-item').forEach(el => io.observe(el));
-
-// COUNT UP
-function animateCount(el, target, isDecimal) {
-  let start = 0;
-  const dur = 1800;
-  const step = (timestamp) => {
-    if(!start) start = timestamp;
-    const prog = Math.min((timestamp - start) / dur, 1);
-    const ease = 1 - Math.pow(1 - prog, 3);
-    const val = ease * target;
-    el.textContent = isDecimal ? val.toFixed(1) : Math.floor(val) + (target >= 300 ? '+' : '');
-    if(prog < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-}
-
-const statsObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if(e.isIntersecting) {
-      document.querySelectorAll('[data-count]').forEach(el => {
-        animateCount(el, parseFloat(el.dataset.count), el.dataset.decimal);
-      });
-      statsObs.disconnect();
-    }
-  });
-}, {threshold: 0.5});
-const statsBar = document.querySelector('.stats-bar');
-if(statsBar) statsObs.observe(statsBar);
-
-// PARALLAX HERO NUMBER
-document.addEventListener('mousemove', e => {
-  const num = document.querySelector('.hero-number');
-  if(num) {
-    const x = (e.clientX / window.innerWidth - .5) * 20;
-    const y = (e.clientY / window.innerHeight - .5) * 20;
-    num.style.transform = `translateY(-50%) translate(${x}px, ${y}px)`;
-  }
-});
+const starsEl=document.getElementById('stars');
+for(let i=0;i<120;i++){const s=document.createElement('div');s.className='star';const size=Math.random()*2.5+.5;s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;starsEl.appendChild(s);}
+const bambooEl=document.getElementById('bamboo');
+for(let i=0;i<60;i++){const b=document.createElement('div');b.className='bamboo-stalk';const h=Math.random()*60+40;const w=Math.random()*8+4;b.style.cssText=`width:${w}px;height:${h}%;--bw:${3+Math.random()*3}s;--br:${Math.random()>.5?'':'-'}${1+Math.random()*3}deg;animation-delay:${Math.random()*3}s;opacity:${.2+Math.random()*.4}`;bambooEl.appendChild(b);}
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').classList.add('hide');},2800);});
+const burger=document.getElementById('burger');
+const overlay=document.getElementById('mobOverlay');
+const mobClose=document.getElementById('mobClose');
+const bd=document.createElement('div');bd.className='mob-backdrop';overlay.insertBefore(bd,overlay.firstChild);
+function openMenu(){overlay.classList.add('open');burger.classList.add('open');document.body.style.overflow='hidden';}
+function closeMenu(){overlay.classList.remove('open');burger.classList.remove('open');document.body.style.overflow='';}
+burger.addEventListener('click',openMenu);mobClose.addEventListener('click',closeMenu);bd.addEventListener('click',closeMenu);
+document.querySelectorAll('.mob-link').forEach(l=>l.addEventListener('click',closeMenu));
+const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.12});
+document.querySelectorAll('.reveal,.tl-item').forEach(el=>io.observe(el));
+function animateCount(el,target,isDecimal){let start=0;const dur=1800;const step=(ts)=>{if(!start)start=ts;const prog=Math.min((ts-start)/dur,1);const ease=1-Math.pow(1-prog,3);const val=ease*target;el.textContent=isDecimal?val.toFixed(1):Math.floor(val)+(target>=300?'+':'');if(prog<1)requestAnimationFrame(step);};requestAnimationFrame(step);}
+const statsObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('[data-count]').forEach(el=>{animateCount(el,parseFloat(el.dataset.count),el.dataset.decimal);});statsObs.disconnect();}});},{threshold:0.5});
+const sb=document.querySelector('.stats-bar');if(sb)statsObs.observe(sb);
 </script>
-<script>
-  const burger=document.getElementById('burger');
-  const overlay=document.getElementById('mobOverlay');
-  const mobClose=document.getElementById('mobClose');
-  const mobLinks=document.querySelectorAll('.mob-link');
-  const bd=document.createElement('div');
-  bd.className='mob-backdrop';
-  overlay.insertBefore(bd,overlay.firstChild);
-  function openMenu(){overlay.classList.add('open');burger.classList.add('open');document.body.style.overflow='hidden';}
-  function closeMenu(){overlay.classList.remove('open');burger.classList.remove('open');document.body.style.overflow='';}
-  burger.addEventListener('click',openMenu);
-  mobClose.addEventListener('click',closeMenu);
-  bd.addEventListener('click',closeMenu);
-  mobLinks.forEach(l=>l.addEventListener('click',closeMenu));
-  </script>
 </body>
 </html>
